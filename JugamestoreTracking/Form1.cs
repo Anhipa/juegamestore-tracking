@@ -27,7 +27,22 @@ namespace JugamestoreTracking
         private void Form1_Load(object sender, EventArgs e)
         {
             this.Text = this.Text + " " + Application.ProductVersion;
-            this.inicializarTablaJuegos();
+
+            try
+            {
+                if (File.Exists(Properties.Settings.Default.FicheroCargaInicial))
+                {
+                    this.cargarFicheroJuegos(Properties.Settings.Default.FicheroCargaInicial);
+                }
+                else
+                {
+                    this.inicializarTablaJuegos();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
         }
         private void salirToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -55,11 +70,19 @@ namespace JugamestoreTracking
         {
             try
             {
-                if (this.sfdListaJuegos.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                if (!File.Exists(Properties.Settings.Default.FicheroCargaInicial) &&
+                    (this.sfdListaJuegos.ShowDialog() != System.Windows.Forms.DialogResult.OK))
                 {
-                    ((DataTable)this.dataGridView1.DataSource).WriteXml(this.sfdListaJuegos.FileName);
-                    ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(this.sfdListaJuegos.FileName.Replace("xml", "xsd"));
+                    return;
                 }
+
+                // Almacenar el fichero creado
+                ((DataTable)this.dataGridView1.DataSource).WriteXml(this.sfdListaJuegos.FileName);
+                ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(this.sfdListaJuegos.FileName.Replace("xml", "xsd"));
+
+                // Almacenamos el nombre del fichero para la proxima apertura
+                Properties.Settings.Default.FicheroCargaInicial = this.ofdListaJuegos.FileName;
+                Properties.Settings.Default.Save();
             }
             catch (Exception ex)
             {
@@ -73,12 +96,11 @@ namespace JugamestoreTracking
             {
                 if (this.ofdListaJuegos.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    DataSet juegosCargados = new DataSet();
-                    juegosCargados.ReadXmlSchema(this.ofdListaJuegos.FileName.Replace("xml", "xsd"));
-                    juegosCargados.ReadXml(this.ofdListaJuegos.FileName);
+                    this.cargarFicheroJuegos(this.ofdListaJuegos.FileName);
 
-                    this.dtJuegos = juegosCargados.Tables["JuegosJuegamestore"];
-                    this.dataGridView1.DataSource = this.dtJuegos;
+                    // Almacenamos el nombre del fichero para la proxima apertura
+                    Properties.Settings.Default.FicheroCargaInicial = this.ofdListaJuegos.FileName;
+                    Properties.Settings.Default.Save();
                 }
             }
             catch (Exception ex)
@@ -283,7 +305,39 @@ namespace JugamestoreTracking
             dtJuegos.PrimaryKey = new DataColumn[] { dtJuegos.Columns["Item"] };
             this.dataGridView1.DataSource = dtJuegos;
         }
+
+        private void cargarFicheroJuegos(string fichero)
+        {
+            DataSet juegosCargados = new DataSet();
+            juegosCargados.ReadXmlSchema(fichero.Replace("xml", "xsd"));
+            juegosCargados.ReadXml(fichero);
+
+            this.dtJuegos = juegosCargados.Tables["JuegosJuegamestore"];
+            this.dataGridView1.DataSource = this.dtJuegos;
+        }
         #endregion
+
+        private void guardarComoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (this.sfdListaJuegos.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    // Almacenar el fichero creado
+                    ((DataTable)this.dataGridView1.DataSource).WriteXml(this.sfdListaJuegos.FileName);
+                    ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(this.sfdListaJuegos.FileName.Replace("xml", "xsd"));
+
+                    // Almacenamos el nombre del fichero para la proxima apertura
+                    Properties.Settings.Default.FicheroCargaInicial = this.sfdListaJuegos.FileName;
+                    Properties.Settings.Default.Save();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+
+            }
+        }
 
     }
 }
