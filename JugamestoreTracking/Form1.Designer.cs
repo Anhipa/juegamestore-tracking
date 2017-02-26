@@ -54,6 +54,10 @@
             this.ofdListaJuegos = new System.Windows.Forms.OpenFileDialog();
             this.btnDetener = new System.Windows.Forms.Button();
             this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.filtrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pintarUltimosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ocultarBajasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.tstbFichero = new System.Windows.Forms.ToolStripTextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -67,11 +71,11 @@
             this.dataGridView1.AllowUserToResizeRows = false;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 78);
+            this.dataGridView1.Location = new System.Drawing.Point(0, 81);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowHeadersVisible = false;
-            this.dataGridView1.Size = new System.Drawing.Size(978, 373);
+            this.dataGridView1.Size = new System.Drawing.Size(978, 370);
             this.dataGridView1.TabIndex = 1;
             // 
             // statusStrip1
@@ -116,10 +120,12 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.archivoToolStripMenuItem,
-            this.herramientasToolStripMenuItem});
+            this.herramientasToolStripMenuItem,
+            this.filtrosToolStripMenuItem,
+            this.tstbFichero});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(978, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(978, 27);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -137,7 +143,7 @@
             this.toolStripSeparator2,
             this.salirToolStripMenuItem});
             this.archivoToolStripMenuItem.Name = "archivoToolStripMenuItem";
-            this.archivoToolStripMenuItem.Size = new System.Drawing.Size(60, 20);
+            this.archivoToolStripMenuItem.Size = new System.Drawing.Size(60, 23);
             this.archivoToolStripMenuItem.Text = "&Archivo";
             // 
             // nuevoToolStripMenuItem
@@ -221,7 +227,7 @@
             this.herramientasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.importarJuegosToolStripMenuItem});
             this.herramientasToolStripMenuItem.Name = "herramientasToolStripMenuItem";
-            this.herramientasToolStripMenuItem.Size = new System.Drawing.Size(90, 20);
+            this.herramientasToolStripMenuItem.Size = new System.Drawing.Size(90, 23);
             this.herramientasToolStripMenuItem.Text = "&Herramientas";
             // 
             // importarJuegosToolStripMenuItem
@@ -246,7 +252,7 @@
             // 
             this.btnDetener.Dock = System.Windows.Forms.DockStyle.Top;
             this.btnDetener.Font = new System.Drawing.Font("Microsoft Sans Serif", 24F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnDetener.Location = new System.Drawing.Point(0, 24);
+            this.btnDetener.Location = new System.Drawing.Point(0, 27);
             this.btnDetener.Name = "btnDetener";
             this.btnDetener.Size = new System.Drawing.Size(978, 54);
             this.btnDetener.TabIndex = 5;
@@ -254,6 +260,42 @@
             this.btnDetener.UseVisualStyleBackColor = true;
             this.btnDetener.Visible = false;
             this.btnDetener.Click += new System.EventHandler(this.btnDetener_Click);
+            // 
+            // filtrosToolStripMenuItem
+            // 
+            this.filtrosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pintarUltimosToolStripMenuItem,
+            this.ocultarBajasToolStripMenuItem});
+            this.filtrosToolStripMenuItem.Name = "filtrosToolStripMenuItem";
+            this.filtrosToolStripMenuItem.Size = new System.Drawing.Size(51, 23);
+            this.filtrosToolStripMenuItem.Text = "Filtros";
+            // 
+            // pintarUltimosToolStripMenuItem
+            // 
+            this.pintarUltimosToolStripMenuItem.Checked = true;
+            this.pintarUltimosToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pintarUltimosToolStripMenuItem.Name = "pintarUltimosToolStripMenuItem";
+            this.pintarUltimosToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pintarUltimosToolStripMenuItem.Text = "Pintar ultimos";
+            this.pintarUltimosToolStripMenuItem.Click += new System.EventHandler(this.pintarUltimosToolStripMenuItem_Click);
+            // 
+            // ocultarBajasToolStripMenuItem
+            // 
+            this.ocultarBajasToolStripMenuItem.Checked = true;
+            this.ocultarBajasToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ocultarBajasToolStripMenuItem.Name = "ocultarBajasToolStripMenuItem";
+            this.ocultarBajasToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ocultarBajasToolStripMenuItem.Text = "Ocultar bajas";
+            this.ocultarBajasToolStripMenuItem.Click += new System.EventHandler(this.ocultarBajasToolStripMenuItem_Click);
+            // 
+            // tstbFichero
+            // 
+            this.tstbFichero.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tstbFichero.AutoSize = false;
+            this.tstbFichero.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tstbFichero.Name = "tstbFichero";
+            this.tstbFichero.ReadOnly = true;
+            this.tstbFichero.Size = new System.Drawing.Size(500, 23);
             // 
             // Form1
             // 
@@ -268,6 +310,7 @@
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Juegamestore Tracking";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.Form1_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.statusStrip1.ResumeLayout(false);
@@ -306,6 +349,10 @@
         private System.Windows.Forms.BindingSource bindingSource1;
         private System.Windows.Forms.Button btnDetener;
         private System.Windows.Forms.ToolStripMenuItem guardarComoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem filtrosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pintarUltimosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ocultarBajasToolStripMenuItem;
+        private System.Windows.Forms.ToolStripTextBox tstbFichero;
     }
 }
 

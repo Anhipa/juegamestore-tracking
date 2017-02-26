@@ -38,6 +38,8 @@ namespace JugamestoreTracking
                 {
                     this.inicializarTablaJuegos();
                 }
+
+                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
             }
             catch (Exception ex)
             {
@@ -61,33 +63,41 @@ namespace JugamestoreTracking
             }
             finally
             {
+
                 this.btnDetener.Visible = false;
                 this.tsslStatus.Text = "Inactivo";
                 this.tsslDetalle.Text = "-";
+
+                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
             }
         }
         private void guardarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
             {
-                if (!File.Exists(Properties.Settings.Default.FicheroCargaInicial) &&
-                    (this.sfdListaJuegos.ShowDialog() != System.Windows.Forms.DialogResult.OK))
+                if (!File.Exists(Properties.Settings.Default.FicheroCargaInicial))
                 {
-                    return;
+                    if (this.sfdListaJuegos.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    {
+                        Properties.Settings.Default.FicheroCargaInicial = this.sfdListaJuegos.FileName;
+                    }
+                    else
+                    {
+                        return;
+                    }
                 }
 
-                // Almacenar el fichero creado
-                ((DataTable)this.dataGridView1.DataSource).WriteXml(this.sfdListaJuegos.FileName);
-                ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(this.sfdListaJuegos.FileName.Replace("xml", "xsd"));
-
                 // Almacenamos el nombre del fichero para la proxima apertura
-                Properties.Settings.Default.FicheroCargaInicial = this.ofdListaJuegos.FileName;
                 Properties.Settings.Default.Save();
+                this.tstbFichero.Text = Properties.Settings.Default.FicheroCargaInicial;
+
+                // Almacenar el fichero creado
+                ((DataTable)this.dataGridView1.DataSource).WriteXml(Properties.Settings.Default.FicheroCargaInicial);
+                ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(Properties.Settings.Default.FicheroCargaInicial.Replace("xml", "xsd"));
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.ToString());
-
             }
         }
         private void abrirToolStripMenuItem_Click(object sender, EventArgs e)
@@ -97,6 +107,9 @@ namespace JugamestoreTracking
                 if (this.ofdListaJuegos.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     this.cargarFicheroJuegos(this.ofdListaJuegos.FileName);
+
+                    this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+                    
 
                     // Almacenamos el nombre del fichero para la proxima apertura
                     Properties.Settings.Default.FicheroCargaInicial = this.ofdListaJuegos.FileName;
@@ -115,6 +128,10 @@ namespace JugamestoreTracking
         private void nuevoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.inicializarTablaJuegos();
+            // Almacenamos el nombre del fichero para la proxima apertura
+            this.tstbFichero.Text = string.Empty;
+            Properties.Settings.Default.FicheroCargaInicial = string.Empty;
+            Properties.Settings.Default.Save();
         }
         #endregion
 
@@ -312,6 +329,8 @@ namespace JugamestoreTracking
             juegosCargados.ReadXmlSchema(fichero.Replace("xml", "xsd"));
             juegosCargados.ReadXml(fichero);
 
+            this.tstbFichero.Text = fichero;
+
             this.dtJuegos = juegosCargados.Tables["JuegosJuegamestore"];
             this.dataGridView1.DataSource = this.dtJuegos;
         }
@@ -321,15 +340,20 @@ namespace JugamestoreTracking
         {
             try
             {
+                string posibleFichero = Path.GetFileNameWithoutExtension(Properties.Settings.Default.FicheroCargaInicial);
+                this.sfdListaJuegos.FileName = posibleFichero;
+
                 if (this.sfdListaJuegos.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    // Almacenar el fichero creado
-                    ((DataTable)this.dataGridView1.DataSource).WriteXml(this.sfdListaJuegos.FileName);
-                    ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(this.sfdListaJuegos.FileName.Replace("xml", "xsd"));
-
                     // Almacenamos el nombre del fichero para la proxima apertura
                     Properties.Settings.Default.FicheroCargaInicial = this.sfdListaJuegos.FileName;
                     Properties.Settings.Default.Save();
+                    this.tstbFichero.Text = Properties.Settings.Default.FicheroCargaInicial;
+
+                    // Almacenar el fichero creado
+                    ((DataTable)this.dataGridView1.DataSource).WriteXml(Properties.Settings.Default.FicheroCargaInicial);
+                    ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(Properties.Settings.Default.FicheroCargaInicial.Replace("xml", "xsd"));
+
                 }
             }
             catch (Exception ex)
@@ -338,6 +362,52 @@ namespace JugamestoreTracking
 
             }
         }
+        private void ocultarBajasToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ocultarBajasToolStripMenuItem.Checked = !ocultarBajasToolStripMenuItem.Checked;
+            this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+        }
+        private void pintarUltimosToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            pintarUltimosToolStripMenuItem.Checked = !pintarUltimosToolStripMenuItem.Checked;
+            this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+
+        }
+        private void OcultarPintar(bool ocultar, bool pintar)
+        {
+            if (ocultarBajasToolStripMenuItem.Checked)
+            {
+                DataView dvFiltrado = this.dtJuegos.AsDataView();
+                dvFiltrado.RowFilter = "FechaBaja = #01/01/1990#";
+                this.dataGridView1.DataSource = dvFiltrado;
+            }
+            else
+            {
+                this.dataGridView1.DataSource = this.dtJuegos;
+            }
+
+            tsslContar.Text = this.dataGridView1.Rows.Count.ToString();
+
+            if (this.dtJuegos.Rows.Count > 0)
+            {
+                if (pintar)
+                {
+                    var fechaFinalRow = from juegos in this.dtJuegos.AsEnumerable()
+                                        orderby juegos.Field<DateTime>("FechaAlta") descending
+                                        select juegos;
+                    DateTime fechaFinal = fechaFinalRow.FirstOrDefault().Field<DateTime>("FechaAlta");
+
+                    foreach (DataGridViewRow dgvr in this.dataGridView1.Rows)
+                    {
+                        if (Convert.ToDateTime(dgvr.Cells["FechaAlta"].Value) == fechaFinal)
+                        {
+                            dgvr.DefaultCellStyle.BackColor = System.Drawing.Color.Green;
+                        }
+                    }
+                }
+            }
+        }
+
 
     }
 }
