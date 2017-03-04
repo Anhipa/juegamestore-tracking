@@ -50,14 +50,16 @@
             this.salirToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.herramientasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.importarJuegosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.sfdListaJuegos = new System.Windows.Forms.SaveFileDialog();
-            this.ofdListaJuegos = new System.Windows.Forms.OpenFileDialog();
-            this.btnDetener = new System.Windows.Forms.Button();
-            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
+            this.actualizandoDisponibilidadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sinActualizarDisponibilidadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.filtrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pintarUltimosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ocultarBajasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tstbFichero = new System.Windows.Forms.ToolStripTextBox();
+            this.sfdListaJuegos = new System.Windows.Forms.SaveFileDialog();
+            this.ofdListaJuegos = new System.Windows.Forms.OpenFileDialog();
+            this.btnDetener = new System.Windows.Forms.Button();
+            this.bindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
@@ -232,10 +234,62 @@
             // 
             // importarJuegosToolStripMenuItem
             // 
+            this.importarJuegosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.actualizandoDisponibilidadToolStripMenuItem,
+            this.sinActualizarDisponibilidadToolStripMenuItem});
             this.importarJuegosToolStripMenuItem.Name = "importarJuegosToolStripMenuItem";
             this.importarJuegosToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
             this.importarJuegosToolStripMenuItem.Text = "Importar juegos";
-            this.importarJuegosToolStripMenuItem.Click += new System.EventHandler(this.importarJuegosToolStripMenuItem_Click);
+            // 
+            // actualizandoDisponibilidadToolStripMenuItem
+            // 
+            this.actualizandoDisponibilidadToolStripMenuItem.Name = "actualizandoDisponibilidadToolStripMenuItem";
+            this.actualizandoDisponibilidadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.actualizandoDisponibilidadToolStripMenuItem.Text = "Actualizar disponibilidad";
+            this.actualizandoDisponibilidadToolStripMenuItem.Click += new System.EventHandler(this.actualizandoDisponibilidadToolStripMenuItem_Click);
+            // 
+            // sinActualizarDisponibilidadToolStripMenuItem
+            // 
+            this.sinActualizarDisponibilidadToolStripMenuItem.Name = "sinActualizarDisponibilidadToolStripMenuItem";
+            this.sinActualizarDisponibilidadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.sinActualizarDisponibilidadToolStripMenuItem.Text = "Sin actualizar disponibilidad";
+            this.sinActualizarDisponibilidadToolStripMenuItem.Click += new System.EventHandler(this.sinActualizarDisponibilidadToolStripMenuItem_Click);
+            // 
+            // filtrosToolStripMenuItem
+            // 
+            this.filtrosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.pintarUltimosToolStripMenuItem,
+            this.ocultarBajasToolStripMenuItem});
+            this.filtrosToolStripMenuItem.Name = "filtrosToolStripMenuItem";
+            this.filtrosToolStripMenuItem.Size = new System.Drawing.Size(51, 23);
+            this.filtrosToolStripMenuItem.Text = "Filtros";
+            // 
+            // pintarUltimosToolStripMenuItem
+            // 
+            this.pintarUltimosToolStripMenuItem.Checked = true;
+            this.pintarUltimosToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.pintarUltimosToolStripMenuItem.Name = "pintarUltimosToolStripMenuItem";
+            this.pintarUltimosToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.pintarUltimosToolStripMenuItem.Text = "Pintar ultimos";
+            this.pintarUltimosToolStripMenuItem.Click += new System.EventHandler(this.pintarUltimosToolStripMenuItem_Click);
+            // 
+            // ocultarBajasToolStripMenuItem
+            // 
+            this.ocultarBajasToolStripMenuItem.Checked = true;
+            this.ocultarBajasToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.ocultarBajasToolStripMenuItem.Name = "ocultarBajasToolStripMenuItem";
+            this.ocultarBajasToolStripMenuItem.Size = new System.Drawing.Size(148, 22);
+            this.ocultarBajasToolStripMenuItem.Text = "Ocultar bajas";
+            this.ocultarBajasToolStripMenuItem.Click += new System.EventHandler(this.ocultarBajasToolStripMenuItem_Click);
+            // 
+            // tstbFichero
+            // 
+            this.tstbFichero.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.tstbFichero.AutoSize = false;
+            this.tstbFichero.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.tstbFichero.Name = "tstbFichero";
+            this.tstbFichero.ReadOnly = true;
+            this.tstbFichero.Size = new System.Drawing.Size(500, 23);
             // 
             // sfdListaJuegos
             // 
@@ -260,42 +314,6 @@
             this.btnDetener.UseVisualStyleBackColor = true;
             this.btnDetener.Visible = false;
             this.btnDetener.Click += new System.EventHandler(this.btnDetener_Click);
-            // 
-            // filtrosToolStripMenuItem
-            // 
-            this.filtrosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.pintarUltimosToolStripMenuItem,
-            this.ocultarBajasToolStripMenuItem});
-            this.filtrosToolStripMenuItem.Name = "filtrosToolStripMenuItem";
-            this.filtrosToolStripMenuItem.Size = new System.Drawing.Size(51, 23);
-            this.filtrosToolStripMenuItem.Text = "Filtros";
-            // 
-            // pintarUltimosToolStripMenuItem
-            // 
-            this.pintarUltimosToolStripMenuItem.Checked = true;
-            this.pintarUltimosToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.pintarUltimosToolStripMenuItem.Name = "pintarUltimosToolStripMenuItem";
-            this.pintarUltimosToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.pintarUltimosToolStripMenuItem.Text = "Pintar ultimos";
-            this.pintarUltimosToolStripMenuItem.Click += new System.EventHandler(this.pintarUltimosToolStripMenuItem_Click);
-            // 
-            // ocultarBajasToolStripMenuItem
-            // 
-            this.ocultarBajasToolStripMenuItem.Checked = true;
-            this.ocultarBajasToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ocultarBajasToolStripMenuItem.Name = "ocultarBajasToolStripMenuItem";
-            this.ocultarBajasToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.ocultarBajasToolStripMenuItem.Text = "Ocultar bajas";
-            this.ocultarBajasToolStripMenuItem.Click += new System.EventHandler(this.ocultarBajasToolStripMenuItem_Click);
-            // 
-            // tstbFichero
-            // 
-            this.tstbFichero.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.tstbFichero.AutoSize = false;
-            this.tstbFichero.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.tstbFichero.Name = "tstbFichero";
-            this.tstbFichero.ReadOnly = true;
-            this.tstbFichero.Size = new System.Drawing.Size(500, 23);
             // 
             // Form1
             // 
@@ -353,6 +371,8 @@
         private System.Windows.Forms.ToolStripMenuItem pintarUltimosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem ocultarBajasToolStripMenuItem;
         private System.Windows.Forms.ToolStripTextBox tstbFichero;
+        private System.Windows.Forms.ToolStripMenuItem actualizandoDisponibilidadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sinActualizarDisponibilidadToolStripMenuItem;
     }
 }
 

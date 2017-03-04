@@ -37,9 +37,9 @@ namespace JugamestoreTracking
                 else
                 {
                     this.inicializarTablaJuegos();
+                    this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
                 }
 
-                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
             }
             catch (Exception ex)
             {
@@ -50,27 +50,7 @@ namespace JugamestoreTracking
         {
             Application.Exit();
         }
-        private void importarJuegosToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                this.btnDetener.Visible = true;
-                this.importarJuegos();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.ToString());
-            }
-            finally
-            {
 
-                this.btnDetener.Visible = false;
-                this.tsslStatus.Text = "Inactivo";
-                this.tsslDetalle.Text = "-";
-
-                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
-            }
-        }
         private void guardarToolStripMenuItem_Click(object sender, EventArgs e)
         {
             try
@@ -92,8 +72,8 @@ namespace JugamestoreTracking
                 this.tstbFichero.Text = Properties.Settings.Default.FicheroCargaInicial;
 
                 // Almacenar el fichero creado
-                ((DataTable)this.dataGridView1.DataSource).WriteXml(Properties.Settings.Default.FicheroCargaInicial);
-                ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(Properties.Settings.Default.FicheroCargaInicial.Replace("xml", "xsd"));
+                this.dtJuegos.WriteXml(Properties.Settings.Default.FicheroCargaInicial);
+                this.dtJuegos.WriteXmlSchema(Properties.Settings.Default.FicheroCargaInicial.Replace("xml", "xsd"));
             }
             catch (Exception ex)
             {
@@ -109,7 +89,6 @@ namespace JugamestoreTracking
                     this.cargarFicheroJuegos(this.ofdListaJuegos.FileName);
 
                     this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
-                    
 
                     // Almacenamos el nombre del fichero para la proxima apertura
                     Properties.Settings.Default.FicheroCargaInicial = this.ofdListaJuegos.FileName;
@@ -136,7 +115,7 @@ namespace JugamestoreTracking
         #endregion
 
         #region Metodos privados
-        private void importarJuegos()
+        private void importarJuegos(bool actualizarDisponibilidad)
         {
             this.tsslStatus.Text = "Consultando...";
             this.tsslDetalle.Text = "Pagina principal";
@@ -163,6 +142,7 @@ namespace JugamestoreTracking
             var juegosActivos = from juegos in this.dtJuegos.AsEnumerable()
                                 where juegos.Field<DateTime>("FechaBaja") == DateTime.Parse("01/01/1990")
                                 select juegos;
+
             if (productos.Count != juegosActivos.Count())
             {
                 int inicio = 1;
@@ -172,6 +152,9 @@ namespace JugamestoreTracking
 
                     this.tsslContar.Text = inicio++ + "\\" + productos.Count;
                     Application.DoEvents();
+
+                    if (!actualizarDisponibilidad && this.dtJuegos.Rows.Contains(new object[] { item })) continue;
+
                     System.Threading.Thread.Sleep(100);
 
                     Uri webJuego = new Uri(string.Format("http://www.juegamestore.es/index.php?route=product/product&product_id={0}", item));
@@ -247,38 +230,38 @@ namespace JugamestoreTracking
                         if (Convert.ToDecimal(juego["PrecioRebaja"]) != precioNewDecimal)
                         {
                             juego["FechaActualizacion"] = DateTime.Now.ToString("dd/MM/yyyy");
-                            juego["PrecioRebaja"] = precioNewDecimal;
                             juego["Descuento"] = descueltoDecimal;
                             juego["Notas"] = juego["Notas"] + "Precio (" + juego["PrecioRebaja"] + "->" + precioNewDecimal + ") | ";
+                            juego["PrecioRebaja"] = precioNewDecimal;
                         }
                         if (Convert.ToDecimal(juego["Disponibilidad"]) != disponibilidadNumero)
                         {
                             juego["FechaActualizacion"] = DateTime.Now.ToString("dd/MM/yyyy");
-                            juego["Disponibilidad"] = disponibilidadNumero;
                             juego["Notas"] = juego["Notas"] + "Disponibilidad (" + juego["Disponibilidad"] + "->" + disponibilidadNumero + ") | ";
+                            juego["Disponibilidad"] = disponibilidadNumero;
                         }
                     }
                     else
                     {
                         this.dtJuegos.Rows.Add(new object[] {
-                    item,
-                    fabricante,
-                    titulo,
-                    precioOldDecimal,  
-                    precioNewDecimal, 
-                    descueltoDecimal, 
-                    estado.Trim(),
-                    disponibilidadNumero,
-                    decimal.Round(puntuacionBGGDecimal, 2), 
-                    webJuego.AbsoluteUri,
-                    DateTime.Now.ToString("dd/MM/yyyy"),
-                    DateTime.Parse("01/01/1990"),
-                    DateTime.Parse("01/01/1990"),
-                    string.Empty
-                    });
+                                                item,
+                                                fabricante,
+                                                titulo,
+                                                precioOldDecimal,
+                                                precioNewDecimal,
+                                                descueltoDecimal,
+                                                estado.Trim(),
+                                                disponibilidadNumero,
+                                                decimal.Round(puntuacionBGGDecimal, 2),
+                                                webJuego.AbsoluteUri,
+                                                DateTime.Now.ToString("dd/MM/yyyy"),
+                                                DateTime.Parse("01/01/1990"),
+                                                DateTime.Parse("01/01/1990"),
+                                                string.Empty
+                                                });
                     }
 
-                    this.dataGridView1.DataSource = this.dtJuegos;
+                    this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
 
                     Application.DoEvents();
                 }
@@ -297,14 +280,14 @@ namespace JugamestoreTracking
                 MessageBox.Show("No se han detectado cambios", "AVISO", MessageBoxButtons.OK, MessageBoxIcon.Information, MessageBoxDefaultButton.Button1);
             }
 
-            this.dataGridView1.DataSource = this.dtJuegos;
+            this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
 
             Application.DoEvents();
         }
         private void inicializarTablaJuegos()
         {
             this.dtJuegos = new DataTable("JuegosJuegamestore");
-            dtJuegos.Columns.Add("Item");
+            dtJuegos.Columns.Add("Item", typeof(Int32));
             dtJuegos.Columns.Add("Fabricante");
             dtJuegos.Columns.Add("Nombre");
             dtJuegos.Columns.Add("PrecioAntes", typeof(Decimal));
@@ -320,7 +303,6 @@ namespace JugamestoreTracking
             dtJuegos.Columns.Add("Notas");
 
             dtJuegos.PrimaryKey = new DataColumn[] { dtJuegos.Columns["Item"] };
-            this.dataGridView1.DataSource = dtJuegos;
         }
 
         private void cargarFicheroJuegos(string fichero)
@@ -332,7 +314,8 @@ namespace JugamestoreTracking
             this.tstbFichero.Text = fichero;
 
             this.dtJuegos = juegosCargados.Tables["JuegosJuegamestore"];
-            this.dataGridView1.DataSource = this.dtJuegos;
+
+            this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
         }
         #endregion
 
@@ -351,8 +334,8 @@ namespace JugamestoreTracking
                     this.tstbFichero.Text = Properties.Settings.Default.FicheroCargaInicial;
 
                     // Almacenar el fichero creado
-                    ((DataTable)this.dataGridView1.DataSource).WriteXml(Properties.Settings.Default.FicheroCargaInicial);
-                    ((DataTable)this.dataGridView1.DataSource).WriteXmlSchema(Properties.Settings.Default.FicheroCargaInicial.Replace("xml", "xsd"));
+                    dtJuegos.WriteXml(Properties.Settings.Default.FicheroCargaInicial);
+                    dtJuegos.WriteXmlSchema(Properties.Settings.Default.FicheroCargaInicial.Replace("xml", "xsd"));
 
                 }
             }
@@ -378,11 +361,14 @@ namespace JugamestoreTracking
             if (ocultarBajasToolStripMenuItem.Checked)
             {
                 DataView dvFiltrado = this.dtJuegos.AsDataView();
+                dvFiltrado.Sort = "FechaAlta DESC";
                 dvFiltrado.RowFilter = "FechaBaja = #01/01/1990#";
                 this.dataGridView1.DataSource = dvFiltrado;
             }
             else
             {
+                DataView dvFiltrado = this.dtJuegos.AsDataView();
+                dvFiltrado.Sort = "FechaAlta DESC";
                 this.dataGridView1.DataSource = this.dtJuegos;
             }
 
@@ -408,6 +394,48 @@ namespace JugamestoreTracking
             }
         }
 
+        private void sinActualizarDisponibilidadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.btnDetener.Visible = true;
+                this.importarJuegos(false);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
 
+                this.btnDetener.Visible = false;
+                this.tsslStatus.Text = "Inactivo";
+                this.tsslDetalle.Text = "-";
+
+                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+            }
+        }
+
+        private void actualizandoDisponibilidadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.btnDetener.Visible = true;
+                this.importarJuegos(true);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+
+                this.btnDetener.Visible = false;
+                this.tsslStatus.Text = "Inactivo";
+                this.tsslDetalle.Text = "-";
+
+                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+            }
+        }
     }
 }
