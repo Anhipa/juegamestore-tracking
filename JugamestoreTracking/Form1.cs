@@ -239,6 +239,10 @@ namespace JugamestoreTracking
                             juego["FechaActualizacion"] = DateTime.Now.ToString("dd/MM/yyyy");
                             juego["Notas"] = juego["Notas"] + "Disponibilidad (" + juego["Disponibilidad"] + "->" + disponibilidadNumero + ") | ";
                             juego["Disponibilidad"] = disponibilidadNumero;
+                            if (disponibilidadNumero == 0)
+                            {
+                                juego["FechaBaja"] = DateTime.Now.ToString("dd/MM/yyyy");
+                            }
                         }
                     }
                     else
@@ -363,16 +367,22 @@ namespace JugamestoreTracking
                 DataView dvFiltrado = this.dtJuegos.AsDataView();
                 dvFiltrado.Sort = "FechaAlta DESC";
                 dvFiltrado.RowFilter = "FechaBaja = #01/01/1990#";
-                this.dataGridView1.DataSource = dvFiltrado;
+                this.ugJuegos.DataSource = dvFiltrado;
+                this.ugJuegos.DisplayLayout.Bands[0].Columns["Fabricante"].PerformAutoResize(Infragistics.Win.UltraWinGrid.PerformAutoSizeType.AllRowsInBand);
+                this.ugJuegos.DisplayLayout.Bands[0].Columns["Nombre"].PerformAutoResize(Infragistics.Win.UltraWinGrid.PerformAutoSizeType.AllRowsInBand);
+                this.ugJuegos.DisplayLayout.Bands[0].Columns["PuntuacionBGG"].Format = "0.00";
             }
             else
             {
                 DataView dvFiltrado = this.dtJuegos.AsDataView();
                 dvFiltrado.Sort = "FechaAlta DESC";
-                this.dataGridView1.DataSource = this.dtJuegos;
+                this.ugJuegos.DataSource = this.dtJuegos;
+                this.ugJuegos.DisplayLayout.Bands[0].Columns["Fabricante"].PerformAutoResize(Infragistics.Win.UltraWinGrid.PerformAutoSizeType.AllRowsInBand);
+                this.ugJuegos.DisplayLayout.Bands[0].Columns["Nombre"].PerformAutoResize(Infragistics.Win.UltraWinGrid.PerformAutoSizeType.AllRowsInBand);
+                this.ugJuegos.DisplayLayout.Bands[0].Columns["PuntuacionBGG"].Format = "0.00";
             }
 
-            tsslContar.Text = this.dataGridView1.Rows.Count.ToString();
+            tsslContar.Text = this.ugJuegos.Rows.Count.ToString();
 
             if (this.dtJuegos.Rows.Count > 0)
             {
@@ -383,11 +393,11 @@ namespace JugamestoreTracking
                                         select juegos;
                     DateTime fechaFinal = fechaFinalRow.FirstOrDefault().Field<DateTime>("FechaAlta");
 
-                    foreach (DataGridViewRow dgvr in this.dataGridView1.Rows)
+                    foreach (Infragistics.Win.UltraWinGrid.UltraGridRow ugr in this.ugJuegos.Rows)
                     {
-                        if (Convert.ToDateTime(dgvr.Cells["FechaAlta"].Value) == fechaFinal)
+                        if (Convert.ToDateTime(ugr.Cells["FechaAlta"].Value) == fechaFinal)
                         {
-                            dgvr.DefaultCellStyle.BackColor = System.Drawing.Color.Green;
+                            ugr.Appearance.BackColor = System.Drawing.Color.LightGreen;
                         }
                     }
                 }
