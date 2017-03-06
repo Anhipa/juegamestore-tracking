@@ -107,6 +107,9 @@ namespace JugamestoreTracking
         private void nuevoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             this.inicializarTablaJuegos();
+
+            this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+
             // Almacenamos el nombre del fichero para la proxima apertura
             this.tstbFichero.Text = string.Empty;
             Properties.Settings.Default.FicheroCargaInicial = string.Empty;
@@ -115,20 +118,25 @@ namespace JugamestoreTracking
         #endregion
 
         #region Metodos privados
-        private void importarJuegos(bool actualizarDisponibilidad)
+        private void importarJuegos(bool actualizarDisponibilidad, int categoria)
         {
             this.tsslStatus.Text = "Consultando...";
             this.tsslDetalle.Text = "Pagina principal";
             this.detenerProceso = false;
             Application.DoEvents();
 
-            Uri webJuegame = new Uri("http://www.juegamestore.es/index.php?route=product/category&path=51&page=1&limit=500");
+            Uri webJuegame = new Uri("http://www.juegamestore.es/index.php?route=product/category&path=" + categoria + "&page=1&limit=500");
             WebRequest consulta = WebRequest.Create(webJuegame);
             WebResponse respuesta = consulta.GetResponse();
             StreamReader reader = new StreamReader(respuesta.GetResponseStream());
             Regex rx = new Regex("product_id=(\\d*)");
-            MatchCollection ss = rx.Matches(reader.ReadToEnd());
+            Regex rxTipo = new Regex("<h1>(.*?)<\\/h1>");
+            string webCompleta = reader.ReadToEnd();
+            MatchCollection ss = rx.Matches(webCompleta);
             List<int> productos = new List<int>();
+
+            MatchCollection ssTipo = rxTipo.Matches(webCompleta);
+            string tipo = ssTipo[0].Groups[1].Value;
 
             foreach (Match match in ss)
             {
@@ -169,6 +177,7 @@ namespace JugamestoreTracking
                     Regex rxTitulo = new Regex("<h1>(.*?)<\\/h1>");
                     Regex rxPrecioOld = new Regex("price-old\">(\\d*.\\d*)");
                     Regex rxPrecioNew = new Regex("price-new\">(\\d*.\\d*)");
+                    Regex rxPrecio = new Regex("Precio:\\s*(\\d*.\\d*)");
                     Regex rxEstado = new Regex("Estado:<\\/span>(.*?)<");
                     Regex rxDisponibilidad = new Regex("Disponibilidad:<\\/span>(.*?)<");
                     Regex rxFabricante = new Regex("Fabricante:<\\/span>.*?<a.*?>(.*?)<");
@@ -185,9 +194,13 @@ namespace JugamestoreTracking
                     precioOldDecimal = decimal.Round(precioOldDecimal, 2);
 
                     string precioNew = rxPrecioNew.Match(htmlJuego).Groups[1].Value.ToString().Replace(".", ",");
+                    string precio = rxPrecio.Match(htmlJuego).Groups[1].Value.ToString().Replace(".", ",");
                     decimal precioNewDecimal;
+                    decimal precioDecimal;
                     decimal.TryParse(precioNew, out precioNewDecimal);
+                    decimal.TryParse(precio, out precioDecimal);
                     precioNewDecimal = decimal.Round(precioNewDecimal, 2);
+                    precioDecimal = decimal.Round(precioDecimal, 2);
 
                     string estado = rxEstado.Match(htmlJuego).Groups[1].Value.ToString();
 
@@ -252,7 +265,7 @@ namespace JugamestoreTracking
                                                 fabricante,
                                                 titulo,
                                                 precioOldDecimal,
-                                                precioNewDecimal,
+                                                (precioNewDecimal != 0) ? precioNewDecimal: precioDecimal,
                                                 descueltoDecimal,
                                                 estado.Trim(),
                                                 disponibilidadNumero,
@@ -261,7 +274,8 @@ namespace JugamestoreTracking
                                                 DateTime.Now.ToString("dd/MM/yyyy"),
                                                 DateTime.Parse("01/01/1990"),
                                                 DateTime.Parse("01/01/1990"),
-                                                string.Empty
+                                                string.Empty,
+                                                tipo
                                                 });
                     }
 
@@ -273,7 +287,7 @@ namespace JugamestoreTracking
                 // Dar de baja los no encontrados
                 foreach (DataRow juegoItem in this.dtJuegos.Rows)
                 {
-                    if (!productos.Contains(Convert.ToInt32(juegoItem["item"])))
+                    if (!productos.Contains(Convert.ToInt32(juegoItem["item"])) && (juegoItem["Tipo"].ToString() == tipo))
                     {
                         juegoItem["FechaBaja"] = DateTime.Now.ToString("dd/MM/yyyy");
                     }
@@ -305,6 +319,7 @@ namespace JugamestoreTracking
             dtJuegos.Columns.Add("FechaBaja", typeof(DateTime));
             dtJuegos.Columns.Add("FechaActualizacion", typeof(DateTime));
             dtJuegos.Columns.Add("Notas");
+            dtJuegos.Columns.Add("Tipo");
 
             dtJuegos.PrimaryKey = new DataColumn[] { dtJuegos.Columns["Item"] };
         }
@@ -318,6 +333,7 @@ namespace JugamestoreTracking
             this.tstbFichero.Text = fichero;
 
             this.dtJuegos = juegosCargados.Tables["JuegosJuegamestore"];
+            if (!this.dtJuegos.Columns.Contains("Tipo")) this.dtJuegos.Columns.Add("Tipo");
 
             this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
         }
@@ -409,7 +425,7 @@ namespace JugamestoreTracking
             try
             {
                 this.btnDetener.Visible = true;
-                this.importarJuegos(false);
+                this.importarJuegos(false, 51);
             }
             catch (Exception ex)
             {
@@ -431,7 +447,60 @@ namespace JugamestoreTracking
             try
             {
                 this.btnDetener.Visible = true;
-                this.importarJuegos(true);
+                this.importarJuegos(true, 51);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+
+                this.btnDetener.Visible = false;
+                this.tsslStatus.Text = "Inactivo";
+                this.tsslDetalle.Text = "-";
+
+                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+            }
+        }
+
+        private void actualizarDisponibilidadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                this.btnDetener.Visible = true;
+                int[] tipos = new int[] { 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48 };
+                foreach (int item in tipos)
+                {
+                    this.importarJuegos(true, item);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString());
+            }
+            finally
+            {
+
+                this.btnDetener.Visible = false;
+                this.tsslStatus.Text = "Inactivo";
+                this.tsslDetalle.Text = "-";
+
+                this.OcultarPintar(ocultarBajasToolStripMenuItem.Checked, pintarUltimosToolStripMenuItem.Checked);
+            }
+        }
+
+        private void sinActualizarDisponibilidadToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+
+            try
+            {
+                this.btnDetener.Visible = true;
+                int[] tipos = new int[] { 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 48 };
+                foreach (int item in tipos)
+                {
+                    this.importarJuegos(false, item);
+                }
             }
             catch (Exception ex)
             {

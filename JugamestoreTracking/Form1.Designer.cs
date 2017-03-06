@@ -62,6 +62,9 @@
             this.importarJuegosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actualizandoDisponibilidadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.sinActualizarDisponibilidadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.importarTodosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.actualizarDisponibilidadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.sinActualizarDisponibilidadToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.filtrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pintarUltimosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ocultarBajasToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -222,7 +225,8 @@
             // herramientasToolStripMenuItem
             // 
             this.herramientasToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.importarJuegosToolStripMenuItem});
+            this.importarJuegosToolStripMenuItem,
+            this.importarTodosToolStripMenuItem});
             this.herramientasToolStripMenuItem.Name = "herramientasToolStripMenuItem";
             this.herramientasToolStripMenuItem.Size = new System.Drawing.Size(90, 23);
             this.herramientasToolStripMenuItem.Text = "&Herramientas";
@@ -249,6 +253,29 @@
             this.sinActualizarDisponibilidadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
             this.sinActualizarDisponibilidadToolStripMenuItem.Text = "Sin actualizar disponibilidad";
             this.sinActualizarDisponibilidadToolStripMenuItem.Click += new System.EventHandler(this.sinActualizarDisponibilidadToolStripMenuItem_Click);
+            // 
+            // importarTodosToolStripMenuItem
+            // 
+            this.importarTodosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.actualizarDisponibilidadToolStripMenuItem,
+            this.sinActualizarDisponibilidadToolStripMenuItem1});
+            this.importarTodosToolStripMenuItem.Name = "importarTodosToolStripMenuItem";
+            this.importarTodosToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.importarTodosToolStripMenuItem.Text = "Importar todos";
+            // 
+            // actualizarDisponibilidadToolStripMenuItem
+            // 
+            this.actualizarDisponibilidadToolStripMenuItem.Name = "actualizarDisponibilidadToolStripMenuItem";
+            this.actualizarDisponibilidadToolStripMenuItem.Size = new System.Drawing.Size(221, 22);
+            this.actualizarDisponibilidadToolStripMenuItem.Text = "Actualizar disponibilidad";
+            this.actualizarDisponibilidadToolStripMenuItem.Click += new System.EventHandler(this.actualizarDisponibilidadToolStripMenuItem_Click);
+            // 
+            // sinActualizarDisponibilidadToolStripMenuItem1
+            // 
+            this.sinActualizarDisponibilidadToolStripMenuItem1.Name = "sinActualizarDisponibilidadToolStripMenuItem1";
+            this.sinActualizarDisponibilidadToolStripMenuItem1.Size = new System.Drawing.Size(221, 22);
+            this.sinActualizarDisponibilidadToolStripMenuItem1.Text = "Sin actualizar disponibilidad";
+            this.sinActualizarDisponibilidadToolStripMenuItem1.Click += new System.EventHandler(this.sinActualizarDisponibilidadToolStripMenuItem1_Click);
             // 
             // filtrosToolStripMenuItem
             // 
@@ -435,6 +462,9 @@
         private System.Windows.Forms.ToolStripMenuItem actualizandoDisponibilidadToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem sinActualizarDisponibilidadToolStripMenuItem;
         private Infragistics.Win.UltraWinGrid.UltraGrid ugJuegos;
+        private System.Windows.Forms.ToolStripMenuItem importarTodosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem actualizarDisponibilidadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem sinActualizarDisponibilidadToolStripMenuItem1;
     }
 }
 
